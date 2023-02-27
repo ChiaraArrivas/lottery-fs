@@ -11,5 +11,12 @@ app.use("/users", require("./routes/users"))
  */
 app.use("/me", require("./routes/me"))
 
+/**
+ * @path /api/draws
+ */
+app.use("/draws", require("./routes/draws"))
+
 module.exports = app
+
+
 
