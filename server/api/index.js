@@ -16,6 +16,18 @@ app.use("/me", require("./routes/me"))
  */
 app.use("/draws", require("./routes/draws"))
 
+/**
+ * @path /api/wallet
+ */
+app.use("/wallet", require("./routes/wallet"))
+
+/**
+ * @path /api/bets
+ */
+app.use("/bets", require("./routes/bets"))
+
+
+
 module.exports = app
 
 

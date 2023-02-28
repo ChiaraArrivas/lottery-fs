@@ -69,6 +69,9 @@ app.post("/", async (req,res) => {
         ...data
     }).save()
 
+    delete user._doc.password;
+    delete user.password;
+
     return res.status(201).json(user._doc || user)
    } catch (error) {
     return serverErrorOut(res,error)

@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const {model, Schema} = mongoose;
 
 const SettingSchema = new Schema({
-    label: {
-        types: String,
+    key: {
+        type: String,
         default: "DRAWS_SETTINGS"
     },
     steps: {
