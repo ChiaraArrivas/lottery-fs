@@ -25,12 +25,6 @@ const UserSchema = new Schema({
         type: Number,
         default: 0,
     },
-    bets: {
-        type: [{
-            type: Schema.Types.ObjectId,
-            ref: "Bet",
-        }]
-    },
     is_active: {
         type: Boolean,
         default: true,

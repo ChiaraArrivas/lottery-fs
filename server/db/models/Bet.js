@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const {model, Schema} = mongoose;
 
 const BetSchema = new Schema({
-    users: {
+    user: {
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true,
@@ -27,7 +27,7 @@ const BetSchema = new Schema({
     draw: {
         type: Schema.Types.ObjectId,
         ref: "Draw",
-        default: null
+        required: true,
     }
 }, {timestamps: true, strict: true});
 
