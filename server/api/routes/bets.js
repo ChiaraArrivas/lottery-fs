@@ -7,6 +7,33 @@ const { authUser } = require("../../middleware/auth");
 const { serverErrorOut } = require("../../utilities/log");
 
 /**
+ * @path /api/bets?page=1&limit=25&activeBets=false
+ */
+app.get('/', authUser, async (req, res)=> {
+    const user = req.user._id;
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 25;
+    const activeBets = req.query.activeBets == 'true';
+
+    const results = {};
+
+    try {
+        results.bets_history = await Bet.paginate({user, status: 'done'}, {page, limit, lean:true});
+
+        if (activeBets) {
+            results.bets_active = await Bet.find({user, status: 'pending'}, '-__v', {lean:true});
+        }
+
+        return res.status(200).json(results);
+
+    } catch (err) {
+        serverErrorOut(res,err);
+    }
+})
+
+
+
+/**
  * @path /api/bets
  */
 app.post('/', authUser, async (req, res)=> {

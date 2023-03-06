@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 const {model, Schema} = mongoose;
 
 const BetSchema = new Schema({
@@ -30,6 +31,8 @@ const BetSchema = new Schema({
         required: true,
     }
 }, {timestamps: true, strict: true});
+
+BetSchema.plugin(mongoosePaginate);
 
 const Bet = model("Bet", BetSchema);
 
