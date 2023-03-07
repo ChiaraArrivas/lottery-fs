@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { authUser } from "../data";
+import { authUser } from "../utility/auth";
 import { useDispatch } from "react-redux";
 import { login } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
+import { retrieveActiveDraw } from "../utility/game";
+import { setDrawData } from "../store/drawSlice";
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -21,13 +23,18 @@ const Login = () => {
         })
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const is_auth = authUser(form.email, form.password);
+        const is_auth = await authUser(form.email, form.password);
         if (is_auth) {
             dispatch(login({
-                id: is_auth,
+                token: is_auth.token,
+                user: is_auth.user,
             }))
+
+            const activeDraw = await retrieveActiveDraw();
+            dispatch(setDrawData(activeDraw));
+
             navigate("/home");
         } else {
             alert("Email o password errati");

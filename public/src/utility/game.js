@@ -1,32 +1,14 @@
-const numbers = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-];
+import axios from "axios"
+import { API_URL } from "../constants";
 
-const drawNumbers = (limit = 6) => {
-  const selected = [];
-  while (selected.length < limit) {
-    const index = Math.floor(Math.random() * numbers.length);
-    const selected_number = numbers[index];
-    if (selected.indexOf(selected_number) === -1) {
-      selected.push(selected_number);
-    }
+export const retrieveActiveDraw = async () => {
+  try {
+    const response = await axios({
+      url: API_URL + '/api/draws/active',
+      method: 'GET',
+    })
+    return response.data;
+  } catch (err) {
+    throw err;
   }
-
-  return selected;
-};
-
-const compareBets = (randomDraw, userBets) => {
-  const results = []
-  const drawNumbers = randomDraw.numbers
-  userBets.forEach((bet)=>{
-    const betNumbers = bet.numbers;
-    const numb = betNumbers.filter((number)=>{
-      return drawNumbers.includes(number)
-    })    
-    bet.selected_numbers = numb;
-    bet.status = "done";
-    bet.won = numb.length >= 2; 
-    results.push(bet);
-  })
-  return results
-};
+} 

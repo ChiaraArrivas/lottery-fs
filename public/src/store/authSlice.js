@@ -6,16 +6,23 @@ export const authSlice = () => {
     return createSlice({
         name: 'auth',
         initialState: {
-            id: auth?.id || null,
+            token: auth?.token || null,
+            user: auth?.user || null,
         },
         reducers: {        
             login: (state, action) => {
-                state.id = action.payload.id
-                localStorage.setItem("auth",JSON.stringify({ id: action.payload.id }))
+                console.log(action.payload);
+                state.token = action.payload.token
+                state.user = action.payload.user
+                localStorage.setItem("auth",JSON.stringify({ 
+                    token: action.payload.token,
+                    user: action.payload.user,
+                }))
             },
     
             logout: (state) => {
-                state.id = null
+                state.token = null
+                state.user = null
                 localStorage.removeItem("auth")
             }
         },
