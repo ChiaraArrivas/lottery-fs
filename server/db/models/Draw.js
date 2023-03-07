@@ -16,7 +16,10 @@ const DrawSchema = new Schema({
         type: Number,
         default: 0
     },
-
+    stats: {
+        type: Object,
+        default: null,
+    }
 }, {timestamps: true, strict: true});
 
 DrawSchema.plugin(mongoosePaginate);

@@ -29,6 +29,10 @@ const BetSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Draw",
         required: true,
+    },
+    prize: {
+        type: Number,
+        default: 0,
     }
 }, {timestamps: true, strict: true});
 

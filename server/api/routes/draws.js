@@ -1,5 +1,5 @@
 const express = require("express");
-const { Draw, Bet } = require("../../db");
+const { Draw, Bet, User } = require("../../db");
 const { serverErrorOut } = require("../../utilities/log");
 const app = express.Router();
 const { drawNumbers, compareBets } = require("../../utilities/game");
@@ -105,15 +105,52 @@ app.put('/', async (req, res)=> {
         })
 
         // assigning prize to bet
-        //TODO: fix bug on mappedBets D:
+        let totalPrize = 0;
         mappedBets.forEach((bet, index) => {
             const winning = prizeMap.find(item => item.combination == bet.combination);
-            if (winning) mappedBets[index].winningPrize = winning.singlePrize;
+            
+            if (winning) {
+                mappedBets[index].winningPrize = winning.singlePrize;
+                totalPrize += winning.singlePrize;
+            }
         })
 
+        const newJackpot = activeDraw.jackpot - totalPrize;
+
         //close existing draw session and create a new one (adding remaining jackpot)
+        await Draw.updateOne({ _id: activeDraw._id }, { 
+            status: "done", 
+            numbers: randomDrawNumbers,
+            stats: {
+                prizeMap, 
+                winningBets, 
+                totalPrize,
+            }
+        });
         
-        return res.status(201).json({activeDraw, randomDrawNumbers, activeBets, mappedBets, prizeMap, winningBets})
+        
+        for (let i = 0; i < mappedBets.length; i++) {
+            const currentBet = mappedBets[i];
+
+            // update single won bets
+            await Bet.updateOne({ _id: currentBet._id }, {
+                selected_numbers: currentBet.selected_numbers,
+                status: "done",
+                won: currentBet.won,
+                prize: currentBet.winningPrize,
+            });
+
+            // update user wallets
+            if (currentBet.won) {
+                const currentUser = await User.findOne({ _id: currentBet.user }, "wallet", { lean: true });
+                await User.updateOne({ _id: currentBet.user }, { wallet: currentUser.wallet + currentBet.winningPrize });
+            }
+        }
+
+        // create new draw session
+        const draw = await new Draw({jackpot: newJackpot}).save();
+
+        return res.status(201).json({ mappedBets })
     } catch (err) {
         serverErrorOut(res, err);
     }
